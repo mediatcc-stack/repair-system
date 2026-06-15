@@ -1,4 +1,3 @@
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <!DOCTYPE html>
 <html lang="th">
 <head>
@@ -10,41 +9,41 @@
 <body class="bg-slate-100 text-slate-800 min-h-screen">
 
     <nav class="bg-white shadow-sm border-b border-slate-200">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-        <h1 class="text-xl font-bold text-slate-900 flex items-center gap-2">
-            🛠️ Technician Dashboard 
-        </h1>
-        <div class="flex items-center gap-2">
-            <a href="/index.html" class="text-sm bg-slate-200 hover:bg-slate-300 px-4 py-2 rounded-lg transition font-medium">
-                ← กลับหน้าไปแจ้งซ่อม
-            </a>
-            <button onclick="checkAdminPassword()" class="text-sm bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg transition font-medium cursor-pointer flex items-center gap-1">
-                👑 เจ้าหน้าที่
-            </button>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <h1 class="text-xl font-bold text-slate-900 flex items-center gap-2 text-center sm:text-left">
+                🛠️ Technician Dashboard 
+            </h1>
+            <div class="flex items-center gap-2 w-full sm:w-auto justify-center sm:justify-end">
+                <a href="/index.html" class="text-xs sm:text-sm bg-slate-200 hover:bg-slate-300 px-3 sm:px-4 py-2 rounded-lg transition font-medium text-center">
+                    ← กลับหน้าแจ้งซ่อม
+                </a>
+                <button onclick="checkAdminPassword()" class="text-xs sm:text-sm bg-indigo-600 hover:bg-indigo-700 text-white px-3 sm:px-4 py-2 rounded-lg transition font-medium cursor-pointer flex items-center gap-1 justify-center">
+                    👑 เจ้าหน้าที่
+                </button>
+            </div>
         </div>
-    </div>
-</nav>
+    </nav>
 
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <main class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 py-4 sm:py-8">
         <div class="bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden">
-            <div class="p-6 border-b border-slate-200 bg-slate-50">
-                <h2 class="font-bold text-lg text-slate-800">รายการแจ้งซ่อมทั้งหมดในระบบ</h2>
+            <div class="p-4 sm:p-6 border-b border-slate-200 bg-slate-50">
+                <h2 class="font-bold text-base sm:text-lg text-slate-800">รายการแจ้งซ่อมทั้งหมดในระบบ</h2>
                 <p class="text-xs text-slate-500">ช่างสามารถดูรายละเอียด ตรวจสอบความเร่งด่วน และกดยอมรับหรือเปลี่ยนสถานะงานได้ที่นี่</p>
             </div>
 
-            <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse">
+            <div class="w-full overflow-x-auto scrollbar-thin">
+                <table class="w-full text-left border-collapse min-w-[800px] sm:min-w-full">
                     <thead>
-                        <tr class="bg-slate-100 text-slate-600 uppercase text-xs tracking-wider border-b border-slate-200">
-                            <th class="py-3.5 px-6 font-semibold">ID</th>
-                            <th class="py-3.5 px-6 font-semibold">ผู้แจ้ง/แผนก</th>
-                            <th class="py-3.5 px-6 font-semibold">ประเภทปัญหา</th>
-                            <th class="py-3.5 px-6 font-semibold">รายละเอียดอาการ</th>
-                            <th class="py-3.5 px-6 font-semibold">ความเร่งด่วน</th>
-                            <th class="py-3.5 px-6 font-semibold">สถานะงาน</th>
+                        <tr class="bg-slate-100 text-slate-600 uppercase text-[11px] sm:text-xs tracking-wider border-b border-slate-200">
+                            <th class="py-3 px-4 sm:px-6 font-semibold w-16">ID</th>
+                            <th class="py-3 px-4 sm:px-6 font-semibold">ผู้แจ้ง/แผนก/ห้อง</th>
+                            <th class="py-3 px-4 sm:px-6 font-semibold">ประเภทปัญหา</th>
+                            <th class="py-3 px-4 sm:px-6 font-semibold">รายละเอียดอาการ</th>
+                            <th class="py-3 px-4 sm:px-6 font-semibold w-28">ความเร่งด่วน</th>
+                            <th class="py-3 px-4 sm:px-6 font-semibold w-32">สถานะงาน</th>
                         </tr>
                     </thead>
-                    <tbody id="ticketList" class="divide-y divide-slate-200 text-sm">
+                    <tbody id="ticketList" class="divide-y divide-slate-200 text-xs sm:text-sm whitespace-nowrap sm:whitespace-normal">
                         <tr>
                             <td colspan="6" class="text-center py-8 text-slate-400">กำลังโหลดข้อมูลข้อมูล...</td>
                         </tr>
@@ -62,7 +61,7 @@
                 const tickets = await response.json();
                 
                 const tbody = document.getElementById('ticketList');
-                tbody.innerHTML = ''; // ล้างข้อมูลเดิมก่อนโหลดใหม่
+                tbody.innerHTML = ''; 
 
                 if (tickets.length === 0) {
                     tbody.innerHTML = `<tr><td colspan="6" class="text-center py-8 text-slate-400">ยังไม่มีรายการแจ้งซ่อมในระบบ</td></tr>`;
@@ -70,44 +69,42 @@
                 }
 
                 tickets.forEach(ticket => {
-                    // ปรับสี Badge ตามความเร่งด่วน
                     let priorityColor = 'bg-slate-100 text-slate-700';
                     if (ticket.priority === 'ด่วน') priorityColor = 'bg-amber-100 text-amber-700';
                     if (ticket.priority === 'ด่วนที่สุด') priorityColor = 'bg-red-100 text-red-700 font-bold';
 
                     let statusStyle = 'bg-slate-100 text-slate-600';
-if (ticket.status === 'รอดำเนินการ') statusStyle = 'bg-amber-50 text-amber-600 border border-amber-200';
-if (ticket.status === 'กำลังซ่อม') statusStyle = 'bg-blue-50 text-blue-600 border border-blue-200';
-if (ticket.status === 'ซ่อมเสร็จสิ้น') statusStyle = 'bg-green-50 text-green-600 border border-green-200';
+                    if (ticket.status === 'รอดำเนินการ') statusStyle = 'bg-amber-50 text-amber-600 border border-amber-200';
+                    if (ticket.status === 'กำลังซ่อม') statusStyle = 'bg-blue-50 text-blue-600 border border-blue-200';
+                    if (ticket.status === 'ซ่อมเสร็จสิ้น') statusStyle = 'bg-green-50 text-green-600 border border-green-200';
 
-const row = document.createElement('tr');
-row.className = 'hover:bg-slate-50 transition';
-row.innerHTML = `
-    <td class="py-4 px-6 font-semibold text-slate-500">#${ticket.id}</td>
-    <td class="py-4 px-6">
-        <div class="font-medium text-slate-900">${ticket.requester_name}</div>
-        <div class="text-xs text-slate-400">แผนก :${ticket.department}</div>
-        <div class="text-xs text-indigo-500 font-medium">📍 ห้อง: ${ticket.room_name || 'ไม่ได้ระบุ'}</div>
-    </td>
-    <td class="py-4 px-6 text-slate-600">${ticket.problem_type}</td>
-    <td class="py-4 px-6 text-slate-600 max-w-xs truncate" title="${ticket.description}">${ticket.description}</td>
-    <td class="py-4 px-6">
-        <span class="px-2.5 py-1 rounded-full text-xs font-medium ${priorityColor}">${ticket.priority}</span>
-    </td>
-    <td class="py-4 px-6">
-        <span class="px-3 py-1.5 rounded-lg text-xs font-semibold ${statusStyle}">
-            ${ticket.status === 'รอดำเนินการ' ? '⏳ ' : ticket.status === 'กำลังซ่อม' ? '⚙️ ' : '✅ '} ${ticket.status}
-        </span>
-    </td>
-`;
-tbody.appendChild(row);
+                    const row = document.createElement('tr');
+                    row.className = 'hover:bg-slate-50 transition';
+                    row.innerHTML = `
+                        <td class="py-3.5 px-4 sm:px-6 font-semibold text-slate-500">#${ticket.id}</td>
+                        <td class="py-3.5 px-4 sm:px-6">
+                            <div class="font-medium text-slate-900">${ticket.requester_name}</div>
+                            <div class="text-xs text-slate-400">แผนก: ${ticket.department}</div>
+                            <div class="text-xs text-indigo-500 font-medium mt-0.5">📍 ห้อง: ${ticket.room_name || 'ไม่ได้ระบุ'}</div>
+                        </td>
+                        <td class="py-3.5 px-4 sm:px-6 text-slate-600">${ticket.problem_type}</td>
+                        <td class="py-3.5 px-4 sm:px-6 text-slate-600 max-w-[200px] sm:max-w-xs truncate" title="${ticket.description}">${ticket.description}</td>
+                        <td class="py-3.5 px-4 sm:px-6">
+                            <span class="px-2.5 py-1 rounded-full text-xs font-medium inline-block ${priorityColor}">${ticket.priority}</span>
+                        </td>
+                        <td class="py-3.5 px-4 sm:px-6">
+                            <span class="px-2.5 py-1.5 rounded-lg text-xs font-semibold inline-block ${statusStyle}">
+                                ${ticket.status === 'รอดำเนินการ' ? '⏳ ' : ticket.status === 'กำลังซ่อม' ? '⚙️ ' : '✅ '} ${ticket.status}
+                            </span>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
                 });
             } catch (error) {
                 console.error('Error:', error);
             }
         }
 
-        // ฟังก์ชันสั่งอัปเดตสถานะเมื่อช่างเลือกเปลี่ยนค่าใน Select Box
         async function updateStatus(id, newStatus) {
             try {
                 const response = await fetch(`/api/repair/${id}`, {
@@ -127,24 +124,18 @@ tbody.appendChild(row);
             }
         }
 
-        // โหลดข้อมูลทันทีเมื่อเปิดหน้าเว็บ
         fetchTickets();
-        
-        // ให้หน้าเว็บทำการดึงข้อมูลใหม่ทุกๆ 10 วินาทีแบบ Real-time เผื่อมีเคสใหม่เด้งเข้ามา
         setInterval(fetchTickets, 10000);
   
-        // ฟังก์ชันสำหรับตรวจสอบรหัสผ่านแอดมินก่อนเปลี่ยนหน้า
-function checkAdminPassword() {
-    const password = prompt("🔒 กรุณากรอกรหัสผ่านสำหรับผู้ดูแลระบบ (Admin):");
-    
-    // ตรวจสอบรหัสผ่านที่ตั้งไว้
-    if (password === "media@2021") {
-        alert("🔓 รหัสผ่านถูกต้อง กำลังนำคุณเข้าสู่หน้าแอดมิน...");
-        window.location.href = "/admin.html"; // ย้ายหน้าไป admin
-    } else if (password !== null) { 
-        // ถ้าพิมพ์ผิด (และไม่ได้กด Cancel)
-        alert("❌ รหัสผ่านไม่ถูกต้อง! ปฏิเสธการเข้าถึง");
-    }
-} </script>
+        function checkAdminPassword() {
+            const password = prompt("🔒 กรุณากรอกรหัสผ่านสำหรับผู้ดูแลระบบ (Admin):");
+            if (password === "media@2021") {
+                alert("🔓 รหัสผ่านถูกต้อง กำลังนำคุณเข้าสู่หน้าแอดมิน...");
+                window.location.href = "/admin.html";
+            } else if (password !== null) { 
+                alert("❌ รหัสผ่านไม่ถูกต้อง! ปฏิเสธการเข้าถึง");
+            }
+        } 
+    </script>
 </body>
 </html>
