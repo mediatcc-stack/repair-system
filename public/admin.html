@@ -3,99 +3,102 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบผู้ดูแลระบบ (Admin Dashboard) - หน่วยงานบริการเทคโนโลยี</title>
+    <title>⚡ CENTRAL REPAIR COMMAND CENTER</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <style>
-        /* จัดการแถบเลื่อน (Scrollbar) ให้มีความสุภาพและเป็นระเบียบ */
+        /* ตกแต่ง Scrollbar สไตล์ Sci-Fi นีออน */
         .custom-scrollbar::-webkit-scrollbar {
             height: 6px;
             width: 6px;
         }
         .custom-scrollbar::-webkit-scrollbar-track {
-            background: #f1f5f9;
+            background: #020617;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 4px;
+            background: #3b82f6;
+            border-radius: 10px;
+            box-shadow: 0 0 10px #3b82f6;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
+            background: #60a5fa;
         }
     </style>
 </head>
-<body class="bg-slate-100 text-slate-800 min-h-screen font-sans antialiased">
+<body class="bg-slate-950 text-slate-200 min-h-screen font-sans antialiased selection:bg-cyan-500 selection:text-black">
 
-    <nav class="bg-slate-900 border-b border-slate-700 sticky top-0 z-50 shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-col sm:flex-row justify-between items-center gap-4">
+    <nav class="bg-slate-900/90 border-b border-cyan-500/20 sticky top-0 z-50 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.8)]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
             <div class="flex items-center gap-3">
-                <span class="text-xl">💼</span>
-                <h1 class="text-lg font-bold tracking-wide text-white">
-                    ระบบบริหารจัดการงานแจ้งซ่อมคอมพิวเตอร์และอุปกรณ์ (สำหรับเจ้าหน้าที่)
+                <div class="h-2.5 w-2.5 rounded-full bg-cyan-400 animate-ping"></div>
+                <h1 class="text-lg font-black tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-400 uppercase">
+                    ⚡ REPAIR CORE CONTROL CENTER
                 </h1>
             </div>
-            <div class="flex gap-2 w-full sm:w-auto justify-center sm:justify-end text-xs sm:text-sm">
-                <a href="/dashboard.html" class="bg-blue-700 hover:bg-blue-600 border border-blue-600 text-white font-medium px-4 py-2 rounded-md transition-all shadow-sm text-center">หน้ารายการแจ้งซ่อมรวม</a>
-                <a href="/index.html" class="bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700 px-4 py-2 rounded-md transition-all font-medium text-center">← หน้าฟอร์มแจ้งซ่อม</a>
+            <div class="flex gap-2 w-full sm:w-auto justify-center sm:justify-end text-xs font-bold tracking-wider uppercase">
+                <a href="/dashboard.html" class="bg-cyan-600 hover:bg-cyan-500 text-slate-950 px-4 py-2 rounded-md transition-all duration-300 shadow-[0_0_15px_rgba(34,211,238,0.3)] hover:shadow-[0_0_25px_rgba(34,211,238,0.6)]">หน้ารายการรวม</a>
+                <a href="/index.html" class="bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700 px-4 py-2 rounded-md transition-all duration-300">← บอร์ดแจ้งซ่อม</a>
             </div>
         </div>
     </nav>
 
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6">
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
         
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
-            <div class="bg-white p-5 rounded-lg border border-slate-200 shadow-xs relative overflow-hidden">
-                <div class="absolute top-0 left-0 w-full h-1 bg-slate-400"></div>
-                <div class="text-xs text-slate-500 font-semibold tracking-wider">จำนวนรายการแจ้งซ่อมทั้งหมด</div>
-                <div id="stat-total" class="text-2xl font-bold text-slate-900 mt-1">0</div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            <div class="bg-slate-900 border border-slate-800 p-5 rounded-xl shadow-xl relative overflow-hidden group hover:border-slate-700 transition-all duration-300">
+                <div class="text-[10px] text-slate-500 font-bold tracking-widest uppercase">TOTAL TICKETS</div>
+                <div id="stat-total" class="text-3xl font-black text-white mt-1 font-mono tracking-tight">0</div>
+                <div class="absolute bottom-0 right-0 text-slate-800 text-5xl font-black p-2 select-none opacity-10 font-mono">ALL</div>
             </div>
-            <div class="bg-white p-5 rounded-lg border border-slate-200 shadow-xs relative overflow-hidden">
-                <div class="absolute top-0 left-0 w-full h-1 bg-amber-500"></div>
-                <div class="text-xs text-amber-600 font-semibold tracking-wider">⏳ อยู่ระหว่างรอดำเนินการ</div>
-                <div id="stat-pending" class="text-2xl font-bold text-amber-600 mt-1">0</div>
+            <div class="bg-slate-900 border border-amber-500/20 p-5 rounded-xl shadow-xl relative overflow-hidden group hover:border-amber-500/40 transition-all duration-300 shadow-[inset_0_0_15px_rgba(245,158,11,0.02)]">
+                <div class="text-[10px] text-amber-500 font-bold tracking-widest uppercase">⏳ PENDING CORE</div>
+                <div id="stat-pending" class="text-3xl font-black text-amber-400 mt-1 font-mono tracking-tight drop-shadow-[0_0_10px_rgba(245,158,11,0.3)]">0</div>
+                <div class="absolute bottom-0 right-0 text-amber-500 text-5xl font-black p-2 select-none opacity-5 font-mono">WAIT</div>
             </div>
-            <div class="bg-white p-5 rounded-lg border border-slate-200 shadow-xs relative overflow-hidden">
-                <div class="absolute top-0 left-0 w-full h-1 bg-blue-600"></div>
-                <div class="text-xs text-blue-600 font-semibold tracking-wider">⚙️ อยู่ระหว่างกำลังซ่อมแซม</div>
-                <div id="stat-processing" class="text-2xl font-bold text-blue-600 mt-1">0</div>
+            <div class="bg-slate-900 border border-blue-500/20 p-5 rounded-xl shadow-xl relative overflow-hidden group hover:border-blue-500/40 transition-all duration-300 shadow-[inset_0_0_15px_rgba(59,130,246,0.02)]">
+                <div class="text-[10px] text-blue-400 font-bold tracking-widest uppercase">⚙️ PROCESSING</div>
+                <div id="stat-processing" class="text-3xl font-black text-blue-400 mt-1 font-mono tracking-tight drop-shadow-[0_0_10px_rgba(59,130,246,0.3)]">0</div>
+                <div class="absolute bottom-0 right-0 text-blue-500 text-5xl font-black p-2 select-none opacity-5 font-mono">RUN</div>
             </div>
-            <div class="bg-white p-5 rounded-lg border border-slate-200 shadow-xs relative overflow-hidden">
-                <div class="absolute top-0 left-0 w-full h-1 bg-emerald-600"></div>
-                <div class="text-xs text-emerald-600 font-semibold tracking-wider">✅ ดำเนินการเสร็จสิ้นแล้ว</div>
-                <div id="stat-completed" class="text-2xl font-bold text-emerald-600 mt-1">0</div>
+            <div class="bg-slate-900 border border-emerald-500/20 p-5 rounded-xl shadow-xl relative overflow-hidden group hover:border-emerald-500/40 transition-all duration-300 shadow-[inset_0_0_15px_rgba(16,185,129,0.02)]">
+                <div class="text-[10px] text-emerald-400 font-bold tracking-widest uppercase">✅ RESOLVED</div>
+                <div id="stat-completed" class="text-3xl font-black text-emerald-400 mt-1 font-mono tracking-tight drop-shadow-[0_0_10px_rgba(16,185,129,0.3)]">0</div>
+                <div class="absolute bottom-0 right-0 text-emerald-500 text-5xl font-black p-2 select-none opacity-5 font-mono">DONE</div>
             </div>
         </div>
 
-        <div class="flex border-b border-slate-200 bg-white p-1 rounded-t-lg border-t border-x border-slate-200 w-fit">
-            <button id="tab-current" onclick="switchTab('current')" class="px-5 py-2 text-xs sm:text-sm font-semibold rounded-md cursor-pointer transition-all bg-slate-100 text-slate-900 border border-slate-300 shadow-xs">
-                รายการปัจจุบัน (ค้างดำเนินการ)
+        <div class="flex bg-slate-900 p-1 rounded-lg border border-slate-800 w-fit gap-1 font-bold tracking-wider text-xs uppercase">
+            <button id="tab-current" onclick="switchTab('current')" class="px-5 py-2.5 rounded-md cursor-pointer transition-all duration-300 bg-slate-800 text-cyan-400 border border-cyan-500/30 shadow-[0_0_15px_rgba(6,182,212,0.15)]">
+                ⚙️ ACTIVE TICKETS (ค้างซ่อม)
             </button>
-            <button id="tab-history" onclick="switchTab('history')" class="px-5 py-2 text-xs sm:text-sm font-semibold rounded-md cursor-pointer transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-50">
-                คลังประวัติ (ดำเนินการเสร็จสิ้น)
+            <button id="tab-history" onclick="switchTab('history')" class="px-5 py-2.5 rounded-md cursor-pointer transition-all duration-300 text-slate-400 hover:text-white hover:bg-slate-800/50">
+                🗄️ TERMINATED HISTORY (ซ่อมเสร็จ)
             </button>
         </div>
 
-        <div class="bg-white rounded-b-lg rounded-tr-lg border border-slate-200 shadow-sm overflow-hidden">
-            <div class="p-5 border-b border-slate-200 bg-slate-50/70">
-                <h2 id="table-title" class="font-bold text-base text-slate-900">ตารางข้อมูลรายการแจ้งซ่อมปัจจุบัน</h2>
-                <p id="table-desc" class="text-xs text-slate-500 mt-1">สิทธิ์สำหรับเจ้าหน้าที่เทคนิคในการตรวจสอบความถูกต้อง ปรับปรุงสถานะภาพ และบริหารจัดการฐานข้อมูล</p>
+        <div class="bg-slate-900 border border-slate-800 rounded-xl shadow-2xl overflow-hidden relative">
+            <div class="p-5 border-b border-slate-800 bg-gradient-to-r from-slate-900 to-slate-950">
+                <h2 id="table-title" class="font-black text-sm tracking-widest text-white uppercase flex items-center gap-2">
+                    <span class="h-1.5 w-1.5 rounded-full bg-cyan-400"></span> ตารางงานแจ้งซ่อมที่กำลังมีผลในระบบ
+                </h2>
+                <p id="table-desc" class="text-[11px] text-slate-500 font-medium mt-1">AUTHORIZED ADMIN MATRIX ONLY — ตรวจสอบ คัดกรอง และบันทึกข้อมูลสถานะลงระบบคลาวด์</p>
             </div>
 
             <div class="w-full overflow-x-auto custom-scrollbar">
                 <table class="w-full text-left border-collapse min-w-[950px]">
                     <thead>
-                        <tr class="bg-slate-100 text-slate-700 text-xs tracking-wider border-b border-slate-200 font-bold">
-                            <th class="py-3 px-5 w-20 text-center">ลำดับ ID</th>
-                            <th class="py-3 px-5">ข้อมูลผู้แจ้งและสถานที่</th>
-                            <th class="py-3 px-5">ประเภทอุปกรณ์/ปัญหา</th>
-                            <th class="py-3 px-5 max-w-xs">รายละเอียดอาการชำรุด</th>
-                            <th class="py-3 px-5 w-28 text-center">ระดับความเร่งด่วน</th>
-                            <th class="py-3 px-5 w-40 text-center">สถานะการดำเนินงาน</th>
-                            <th class="py-3 px-5 w-24 text-center">การจัดการ</th>
+                        <tr class="bg-slate-950 text-slate-400 text-[10px] tracking-widest uppercase border-b border-slate-800 font-black">
+                            <th class="py-4 px-5 w-20 text-center text-cyan-500">SYS_ID</th>
+                            <th class="py-4 px-5">USER / LOCATION</th>
+                            <th class="py-4 px-5">CATEGORY / NODE</th>
+                            <th class="py-4 px-5 max-w-xs">ISSUE LOG DETAILS</th>
+                            <th class="py-4 px-5 w-28 text-center">PRIORITY</th>
+                            <th class="py-4 px-5 w-40 text-center">SYSTEM STATUS</th>
+                            <th class="py-4 px-5 w-24 text-center">ACTION</th>
                         </tr>
                     </thead>
-                    <tbody id="adminTicketList" class="divide-y divide-slate-200 text-xs sm:text-sm text-slate-700">
+                    <tbody id="adminTicketList" class="divide-y divide-slate-800/60 text-xs text-slate-300 font-medium">
                         <tr>
-                            <td colspan="7" class="text-center py-12 text-slate-400 font-medium">ระบบกำลังตรวจสอบสิทธิ์เชื่อมต่อคลาวด์ฐานข้อมูล...</td>
+                            <td colspan="7" class="text-center py-16 text-slate-600 font-mono tracking-widest uppercase animate-pulse">Connecting to Cloudflare D1 Storage Matrix...</td>
                         </tr>
                     </tbody>
                 </table>
@@ -108,7 +111,7 @@
 
         window.onload = function() {
             loadAdminDashboard();
-            setInterval(loadAdminDashboard, 5000); // กำหนดการดึงข้อมูลอัตโนมัติทุก 5 วินาที
+            setInterval(loadAdminDashboard, 5000); 
         }
 
         function loadAdminDashboard() {
@@ -116,7 +119,6 @@
             fetchAndRenderTable();
         }
 
-        // ฟังก์ชันสลับการจัดแต่งแท็บให้อยู่ในกรอบความเป็นทางการสไตล์คลาสสิก
         function switchTab(view) {
             currentView = view;
             const tabCurrent = document.getElementById('tab-current');
@@ -125,15 +127,15 @@
             const tableDesc = document.getElementById('table-desc');
 
             if (view === 'current') {
-                tabCurrent.className = "px-5 py-2 text-xs sm:text-sm font-semibold rounded-md cursor-pointer transition-all bg-slate-100 text-slate-900 border border-slate-300 shadow-xs";
-                tabHistory.className = "px-5 py-2 text-xs sm:text-sm font-semibold rounded-md cursor-pointer transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-50";
-                tableTitle.innerText = "ตารางข้อมูลรายการแจ้งซ่อมปัจจุบัน";
-                tableDesc.innerText = "สิทธิ์สำหรับเจ้าหน้าที่เทคนิคในการตรวจสอบความถูกต้อง ปรับปรุงสถานะภาพ และบริหารจัดการฐานข้อมูล";
+                tabCurrent.className = "px-5 py-2.5 rounded-md cursor-pointer transition-all duration-300 bg-slate-800 text-cyan-400 border border-cyan-500/30 shadow-[0_0_15px_rgba(6,182,212,0.15)]";
+                tabHistory.className = "px-5 py-2.5 rounded-md cursor-pointer transition-all duration-300 text-slate-400 hover:text-white hover:bg-slate-800/50";
+                tableTitle.innerHTML = `<span class="h-1.5 w-1.5 rounded-full bg-cyan-400"></span> ตารางงานแจ้งซ่อมที่กำลังมีผลในระบบ`;
+                tableDesc.innerText = "AUTHORIZED ADMIN MATRIX ONLY — ตรวจสอบ คัดกรอง และบันทึกข้อมูลสถานะลงระบบคลาวด์";
             } else {
-                tabCurrent.className = "px-5 py-2 text-xs sm:text-sm font-semibold rounded-md cursor-pointer transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-50";
-                tabHistory.className = "px-5 py-2 text-xs sm:text-sm font-semibold rounded-md cursor-pointer transition-all bg-slate-100 text-slate-900 border border-slate-300 shadow-xs";
-                tableTitle.innerText = "คลังประวัติรายงานผลเสร็จสิ้น (Archived)";
-                tableDesc.innerText = "รวบรวมข้อมูลและสถิติคำสั่งแจ้งซ่อมทั้งหมดที่เจ้าหน้าที่ฝ่ายเทคนิคได้ดำเนินการแก้ไขและปิดงานเรียบร้อยแล้ว";
+                tabCurrent.className = "px-5 py-2.5 rounded-md cursor-pointer transition-all duration-300 text-slate-400 hover:text-white hover:bg-slate-800/50";
+                tabHistory.className = "px-5 py-2.5 rounded-md cursor-pointer transition-all duration-300 bg-slate-800 text-cyan-400 border border-cyan-500/30 shadow-[0_0_15px_rgba(6,182,212,0.15)]";
+                tableTitle.innerHTML = `<span class="h-1.5 w-1.5 rounded-full bg-emerald-400"></span> คลังประวัติรายงานที่ปิดเคสสมบูรณ์ (ARCHIVED LOG)`;
+                tableDesc.innerText = "TERMINATED CORES ONLY — ข้อมูลคำสั่งแจ้งซ่อมทั้งหมดที่ผ่านกระบวนการแก้ไขและเก็บรักษาบน Cloudflare D1 ถาวร";
             }
             fetchAndRenderTable();
         }
@@ -147,7 +149,7 @@
                 document.getElementById('stat-processing').innerText = data.processing;
                 document.getElementById('stat-completed').innerText = data.completed;
             } catch (error) {
-                console.error("ระบบไม่สามารถเชื่อมต่อสถิติข้อมูลได้:", error);
+                console.error("Stats Core Link Failure:", error);
             }
         }
 
@@ -167,49 +169,49 @@
                 }
 
                 if (displayedTickets.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="7" class="text-center py-12 text-slate-400 font-medium bg-slate-50/30">ไม่พบข้อมูลบันทึกในระบบในขณะนี้</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="7" class="text-center py-16 text-slate-600 font-mono tracking-widest uppercase">NO DATA STREAMS IN THIS NODE</td></tr>`;
                     return;
                 }
 
                 displayedTickets.forEach(ticket => {
-                    // ปรับรูปแบบ Tag ความเร่งด่วนให้อยู่ในกรอบทางการ (เรียบง่าย สุภาพ ไม่ฉูดฉาด)
-                    let priorityClass = 'bg-slate-100 text-slate-700 border border-slate-300';
-                    if (ticket.priority === 'ด่วน') priorityClass = 'bg-amber-50 text-amber-700 border border-amber-300';
-                    if (ticket.priority === 'ด่วนที่สุด') priorityClass = 'bg-red-50 text-red-700 border border-red-300 font-bold';
+                    // ออกแบบป้ายความเร่งด่วนสไตล์ Cyberpunk Badge
+                    let priorityClass = 'bg-slate-950 text-slate-400 border border-slate-800';
+                    if (ticket.priority === 'ด่วน') priorityClass = 'bg-amber-950/40 text-amber-400 border border-amber-500/30';
+                    if (ticket.priority === 'ด่วนที่สุด') priorityClass = 'bg-red-950/60 text-red-400 border border-red-500/40 font-black shadow-[0_0_10px_rgba(239,68,68,0.2)]';
 
                     const row = document.createElement('tr');
-                    row.className = 'hover:bg-slate-50/80 transition-colors duration-150';
+                    row.className = 'hover:bg-slate-800/30 transition-all duration-150 border-b border-slate-800/40';
                     row.innerHTML = `
-                        <td class="py-3 px-5 font-mono text-center font-semibold text-slate-500">#${ticket.id}</td>
-                        <td class="py-3 px-5">
-                            <div class="font-bold text-slate-900">${ticket.requester_name}</div>
-                            <div class="text-xs text-slate-500 mt-0.5 space-y-0.5">
-                                <div>• ฝ่าย/แผนก: ${ticket.department}</div>
-                                <div class="text-slate-600 font-medium">📍 ห้องปฏิบัติการ: ${ticket.room_name || 'ไม่ระบุ'}</div>
+                        <td class="py-3.5 px-5 font-mono text-center font-bold text-cyan-500/70 bg-slate-950/40">#${ticket.id}</td>
+                        <td class="py-3.5 px-5">
+                            <div class="font-extrabold text-white text-sm tracking-wide">${ticket.requester_name}</div>
+                            <div class="text-[11px] text-slate-500 mt-0.5 font-mono">
+                                <div>DEPT: ${ticket.department}</div>
+                                <div class="text-indigo-400">NODE_ROOM: ${ticket.room_name || 'NULL'}</div>
                             </div>
                         </td>
-                        <td class="py-3 px-5 font-medium text-slate-800">${ticket.problem_type}</td>
-                        <td class="py-3 px-5 text-slate-600 whitespace-normal break-words max-w-xs" title="${ticket.description}">${ticket.description}</td>
-                        <td class="py-3 px-5 text-center">
-                            <span class="px-2.5 py-0.5 rounded text-xs inline-block ${priorityClass}">${ticket.priority}</span>
+                        <td class="py-3.5 px-5 font-bold text-slate-200 tracking-wide">${ticket.problem_type}</td>
+                        <td class="py-3.5 px-5 text-slate-400 whitespace-normal break-words max-w-xs font-mono text-[11px]" title="${ticket.description}">${ticket.description}</td>
+                        <td class="py-3.5 px-5 text-center">
+                            <span class="px-2.5 py-0.5 rounded text-[10px] font-bold tracking-widest inline-block uppercase ${priorityClass}">${ticket.priority}</span>
                         </td>
-                        <td class="py-3 px-5 text-center">
-                            <select onchange="updateStatusByAdmin(${ticket.id}, this.value)" class="px-2 py-1 bg-white border border-slate-300 rounded text-xs focus:outline-none focus:ring-1 focus:ring-blue-500 text-slate-800 font-medium cursor-pointer w-full max-w-[140px] hover:border-slate-400">
-                                <option value="รอดำเนินการ" ${ticket.status === 'รอดำเนินการ' ? 'selected' : ''}>⏳ รอดำเนินการ</option>
-                                <option value="กำลังซ่อม" ${ticket.status === 'กำลังซ่อม' || ticket.status === 'กำลังดำเนินการ' ? 'selected' : ''}>⚙️ กำลังดำเนินการ</option>
-                                <option value="ซ่อมเสร็จสิ้น" ${ticket.status === 'ซ่อมเสร็จสิ้น' ? 'selected' : ''}>✅ ดำเนินการเสร็จสิ้น</option>
+                        <td class="py-3.5 px-5 text-center">
+                            <select onchange="updateStatusByAdmin(${ticket.id}, this.value)" class="px-2.5 py-1 bg-slate-950 border border-slate-800 rounded text-xs focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 text-slate-300 font-bold cursor-pointer w-full max-w-[145px] hover:border-slate-700 font-mono">
+                                <option value="รอดำเนินการ" class="bg-slate-900 text-amber-500" ${ticket.status === 'รอดำเนินการ' ? 'selected' : ''}>⏳ PENDING</option>
+                                <option value="กำลังซ่อม" class="bg-slate-900 text-blue-400" ${ticket.status === 'กำลังซ่อม' || ticket.status === 'กำลังดำเนินการ' ? 'selected' : ''}>⚙️ WIP_REPAIR</option>
+                                <option value="ซ่อมเสร็จสิ้น" class="bg-slate-900 text-emerald-400" ${ticket.status === 'ซ่อมเสร็จสิ้น' ? 'selected' : ''}>✅ RESOLVED</option>
                             </select>
                         </td>
-                        <td class="py-3 px-5 text-center">
-                            <button onclick="deleteTicketByAdmin(${ticket.id})" class="text-red-600 hover:text-red-800 border border-slate-200 hover:border-red-200 bg-white hover:bg-red-50 px-2 py-1 rounded transition-all cursor-pointer text-xs font-medium inline-flex items-center gap-1" title="ลบข้อมูลจากระบบ">
-                                🗑️ ลบข้อมูล
+                        <td class="py-3.5 px-5 text-center">
+                            <button onclick="deleteTicketByAdmin(${ticket.id})" class="text-red-400 hover:text-red-300 border border-red-950 hover:border-red-500/30 bg-red-950/10 hover:bg-red-950/40 px-3 py-1 rounded transition-all duration-300 cursor-pointer text-[11px] font-bold tracking-wider uppercase font-mono" title="WIPE NODE FROM CLOUD">
+                                🗑️ WIPE
                             </button>
                         </td>
                     `;
                     tbody.appendChild(row);
                 });
             } catch (error) {
-                console.error('ระบบการเรนเดอร์ตารางข้อมูลผิดพลาด:', error);
+                console.error('Grid Rendering Matrix Stream Error:', error);
             }
         }
 
@@ -224,7 +226,7 @@
                 if (result.success) {
                     loadAdminDashboard();
                 } else {
-                    alert('เกิดข้อผิดพลาด: ไม่สามารถปรับปรุงสถานะบนระบบคลาวด์ได้เนื่องจาก ' + result.message);
+                    alert('CRITICAL ERROR: Cloud sync failed - ' + result.message);
                 }
             } catch (error) {
                 console.error(error);
@@ -232,17 +234,17 @@
         }
 
         async function deleteTicketByAdmin(id) {
-            if (confirm(`คำเตือน: คุณต้องการลบรายการข้อมูลหมายเลข #${id} ออกจากระบบฐานข้อมูลคลาวด์อย่างถาวรใช่หรือไม่?`)) {
+            if (confirm(`WARNING: Are you sure you want to permanently WIPE ticket #${id} from Cloudflare D1 Matrix?`)) {
                 try {
                     const response = await fetch(`/api/repair/${id}`, { method: 'DELETE' });
                     const result = await response.json();
                     if (result.success) {
                         loadAdminDashboard();
                     } else {
-                        alert('เกิดข้อผิดพลาด: ไม่สามารถลบข้อมูลชิ้นนี้ได้เนื่องจาก ' + result.message);
+                        alert('CRITICAL ERROR: Wipe operation failed - ' + result.message);
                     }
                 } catch (error) {
-                    console.error('การทำงานของระบบล้มเหลว:', error);
+                    console.error('Matrix system execution failed:', error);
                 }
             }
         }
