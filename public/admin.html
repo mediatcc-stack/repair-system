@@ -41,10 +41,19 @@
             </div>
         </div>
 
+        <div class="flex gap-2 mb-4">
+            <button id="tab-current" onclick="switchTab('current')" class="px-4 py-2 text-sm font-semibold rounded-lg bg-indigo-600 text-white shadow-sm cursor-pointer transition">
+                📋 เคสปัจจุบัน (รอดำเนินการ/กำลังซ่อม)
+            </button>
+            <button id="tab-history" onclick="switchTab('history')" class="px-4 py-2 text-sm font-semibold rounded-lg bg-slate-200 text-slate-700 hover:bg-slate-300 cursor-pointer transition">
+                🗄️ ประวัติการซ่อมเสร็จแล้ว
+            </button>
+        </div>
+
         <div class="bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden">
             <div class="p-4 sm:p-6 border-b border-slate-200 bg-slate-50">
-                <h2 class="font-bold text-base sm:text-lg text-slate-800">รายการแจ้งซ่อมทั้งหมดในระบบ (มุมมองผู้ดูแลระบบ)</h2>
-                <p class="text-xs text-slate-500">สิทธิ์แอดมินสำหรับตรวจสอบ จัดการสถานะ และลบข้อมูลประวัติที่ผิดพลาดออกจากระบบ</p>
+                <h2 id="table-title" class="font-bold text-base sm:text-lg text-slate-800">รายการแจ้งซ่อมปัจจุบัน</h2>
+                <p id="table-desc" class="text-xs text-slate-500">สิทธิ์แอดมินสำหรับตรวจสอบ จัดการสถานะ และลบข้อมูลประวัติที่ไม่ถูกต้อง</p>
             </div>
 
             <div class="w-full overflow-x-auto scrollbar-thin">
@@ -71,28 +80,45 @@
     </main>
 
     <script>
+        let currentView = 'current'; // ตัวแปรเก็บสถานะแท็บปัจจุบัน ('current' หรือ 'history')
+
         window.onload = function() {
-            loadAdminData(); 
+            loadDashboardStats();
+            renderTable();
+            
+            // รีเฟรชข้อมูลอัตโนมัติทุกๆ 5 วินาที
+            setInterval(() => {
+                loadDashboardStats();
+                renderTable();
+            }, 5000);
         }
 
-        function loadAdminData() {
-            loadDashboardStats();
-            fetchTicketsForAdmin();
-            
-            // ใช้ร่วมกับตัวดึงข้อมูลแบบอัปเดตต่อเนื่อง
-            if(!window.adminIntervalId){
-                window.adminIntervalId = setInterval(() => {
-                    loadDashboardStats();
-                    fetchTicketsForAdmin();
-                }, 5000);
+        // ฟังก์ชันสลับแท็บ
+        function switchTab(view) {
+            currentView = view;
+            const tabCurrent = document.getElementById('tab-current');
+            const tabHistory = document.getElementById('tab-history');
+            const tableTitle = document.getElementById('table-title');
+            const tableDesc = document.getElementById('table-desc');
+
+            if (view === 'current') {
+                tabCurrent.className = "px-4 py-2 text-sm font-semibold rounded-lg bg-indigo-600 text-white shadow-sm cursor-pointer transition";
+                tabHistory.className = "px-4 py-2 text-sm font-semibold rounded-lg bg-slate-200 text-slate-700 hover:bg-slate-300 cursor-pointer transition";
+                tableTitle.innerText = "รายการแจ้งซ่อมปัจจุบัน";
+                tableDesc.innerText = "สิทธิ์แอดมินสำหรับตรวจสอบ จัดการสถานะ และลบข้อมูลประวัติที่ไม่ถูกต้อง";
+            } else {
+                tabCurrent.className = "px-4 py-2 text-sm font-semibold rounded-lg bg-slate-200 text-slate-700 hover:bg-slate-300 cursor-pointer transition";
+                tabHistory.className = "px-4 py-2 text-sm font-semibold rounded-lg bg-indigo-600 text-white shadow-sm cursor-pointer transition";
+                tableTitle.innerText = "🗄️ คลังประวัติการซ่อมเสร็จสิ้น";
+                tableDesc.innerText = "รวบรวมข้อมูลเคสทั้งหมดที่เจ้าหน้าที่ได้ดำเนินการปิดงานเรียบร้อยแล้ว";
             }
+            renderTable();
         }
 
         async function loadDashboardStats() {
             try {
                 const response = await fetch('/api/admin/stats');
                 const data = await response.json();
-                
                 document.getElementById('stat-total').innerText = data.total;
                 document.getElementById('stat-pending').innerText = data.pending;
                 document.getElementById('stat-processing').innerText = data.processing;
@@ -102,16 +128,24 @@
             }
         }
 
-        async function fetchTicketsForAdmin() {
+        // ฟังก์ชันเลือกดึงข้อมูลตามแท็บที่เปิดอยู่
+        async function renderTable() {
             try {
-                const response = await fetch('/api/repairs');
-                const tickets = await response.json();
+                // ถ้าอยู่ที่แท็บประวัติ ให้เรียกไปที่ API history ที่เราสร้างขึ้นใหม่
+                const apiUrl = currentView === 'current' ? '/api/repairs' : '/api/repairs/history';
+                const response = await fetch(apiUrl);
+                let tickets = await response.json();
                 
+                // ถ้าอยู่แท็บปัจจุบัน ให้กรองเอา 'ซ่อมเสร็จสิ้น' ออกไปแสดงผลเฉพาะอันที่ยังค้างอยู่
+                if (currentView === 'current') {
+                    tickets = tickets.filter(t => t.status !== 'ซ่อมเสร็จสิ้น');
+                }
+
                 const tbody = document.getElementById('adminTicketList');
                 tbody.innerHTML = ''; 
 
                 if (tickets.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="7" class="text-center py-8 text-slate-400">ยังไม่มีรายการแจ้งซ่อมในระบบ</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="7" class="text-center py-8 text-slate-400">ไม่มีรายการข้อมูลในแท็บนี้</td></tr>`;
                     return;
                 }
 
@@ -163,8 +197,8 @@
                 });
                 const result = await response.json();
                 if (result.success) {
-                    console.log(`แอดมินเปลี่ยนสถานะเคส #${id} เป็น: ${newStatus}`);
                     loadDashboardStats(); 
+                    renderTable(); // โหลดตารางใหม่ทันที เคสที่ซ่อมเสร็จจะย้ายไปอยู่แท็บประวัติโดยอัตโนมัติ
                 } else {
                     alert('ไม่สามารถอัปเดตสถานะได้: ' + result.message);
                 }
@@ -173,25 +207,20 @@
             }
         }
 
-        // 🔥 ฟังก์ชันเด็ดสำหรับลบประวัติงานแจ้งซ่อมออกไปจากดาต้าเบส
         async function deleteTicketByAdmin(id) {
-            if (confirm(`⚠️ คุณแน่ใจหรือไม่ว่าต้องการ "ลบประวัติการแจ้งซ่อม" หมายเลข #${id} ออกจากระบบถาวร? (การกระทำนี้ไม่สามารถย้อนคืนได้)`)) {
+            if (confirm(`⚠️ คุณแน่ใจหรือไม่ว่าต้องการ "ลบประวัติการแจ้งซ่อม" หมายเลข #${id} ออกจากระบบถาวร?`)) {
                 try {
-                    const response = await fetch(`/api/repair/${id}`, {
-                        method: 'DELETE'
-                    });
+                    const response = await fetch(`/api/repair/${id}`, { method: 'DELETE' });
                     const result = await response.json();
-                    
                     if (result.success) {
                         alert('🗑️ ลบข้อมูลประวัติเรียบร้อยแล้ว!');
                         loadDashboardStats();
-                        fetchTicketsForAdmin(); // ดึงข้อมูลชุดใหม่มาอัปเดตทันที
+                        renderTable();
                     } else {
                         alert('ไม่สามารถลบข้อมูลได้: ' + result.message);
                     }
                 } catch (error) {
                     console.error('Error deleting ticket:', error);
-                    alert('เกิดข้อผิดพลาดในการเชื่อมต่อเซิร์ฟเวอร์');
                 }
             }
         }

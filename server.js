@@ -125,6 +125,16 @@ app.get('/api/admin/devices', (req, res) => {
         res.json(rows);
     });
 });
+// API สำหรับดึงข้อมูลเฉพาะเคสที่ "ซ่อมเสร็จสิ้น" แล้ว (ประวัติการซ่อม)
+app.get('/api/repairs/history', (req, res) => {
+    const query = `SELECT * FROM repairs WHERE status = 'ซ่อมเสร็จสิ้น' ORDER BY id DESC`;
+    db.all(query, [], (err, rows) => {
+        if (err) {
+            return res.status(500).json({ success: false, message: err.message });
+        }
+        res.json(rows);
+    });
+});
 // 3. API สำหรับให้ Admin ลบประวัติการแจ้งซ่อม (DELETE /api/repair/:id)
 app.delete('/api/repair/:id', (req, res) => {
     const { id } = req.params;
