@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบผู้ดูแลระบบ (Admin Dashboard)</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen">
+
+    <nav class="bg-indigo-950 shadow-md text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+            <h1 class="text-xl font-bold flex items-center gap-2">
+                👑 หน้าต่างเจ้าหน้าที่
+            </h1>
+            <div class="flex gap-4">
+                <a href="/dashboard.html" class="text-sm bg-indigo-800 hover:bg-indigo-700 px-4 py-2 rounded-lg transition">หน้ารายการแจ้งซ่อม</a>
+                <a href="/index.html" class="text-sm bg-slate-200 text-slate-800 hover:bg-slate-300 px-4 py-2 rounded-lg transition font-medium">← หน้าแจ้งซ่อม</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                <div class="text-sm text-slate-500 font-medium">เคสแจ้งซ่อมทั้งหมด</div>
+                <div id="stat-total" class="text-3xl font-bold text-slate-900 mt-2">0</div>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 border-l-4 border-l-amber-500">
+                <div class="text-sm text-slate-500 font-medium">⏳ รอดำเนินการ</div>
+                <div id="stat-pending" class="text-3xl font-bold text-amber-600 mt-2">0</div>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 border-l-4 border-l-blue-500">
+                <div class="text-sm text-slate-500 font-medium">⚙️ กำลังดำเนินการ</div>
+                <div id="stat-processing" class="text-3xl font-bold text-blue-600 mt-2">0</div>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 border-l-4 border-l-green-500">
+                <div class="text-sm text-slate-500 font-medium">✅ ซ่อมเสร็จสิ้น</div>
+                <div id="stat-completed" class="text-3xl font-bold text-green-600 mt-2">0</div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden">
+            <div class="p-6 border-b border-slate-200 bg-slate-50">
+                <h2 class="font-bold text-lg text-slate-800">รายการแจ้งซ่อมทั้งหมดในระบบ (มุมมองผู้ดูแลระบบ)</h2>
+                <p class="text-xs text-slate-500">สิทธิ์แอดมินสำหรับตรวจสอบภาพรวมเท่านั้น ไม่สามารถแก้ไขสถานะงานของช่างได้</p>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-100 text-slate-600 uppercase text-xs tracking-wider border-b border-slate-200">
+                            <th class="py-3.5 px-6 font-semibold">ID</th>
+                            <th class="py-3.5 px-6 font-semibold">ผู้แจ้ง/แผนก</th>
+                            <th class="py-3.5 px-6 font-semibold">ประเภทปัญหา</th>
+                            <th class="py-3.5 px-6 font-semibold">รายละเอียดอาการ</th>
+                            <th class="py-3.5 px-6 font-semibold">ความเร่งด่วน</th>
+                            <th class="py-3.5 px-6 font-semibold">สถานะงาน</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adminTicketList" class="divide-y divide-slate-200 text-sm">
+                        <tr>
+                            <td colspan="6" class="text-center py-8 text-slate-400">กำลังโหลดข้อมูล...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // ระบบตรวจเช็ครหัสผ่านตอนเข้าหน้า Admin
+        window.onload = function() {
+            
+                loadAdminData(); // ถ้าเคยล็อกอินไว้แล้วให้โหลดข้อมูลเลย
+            }
+
+        // ฟังก์ชันศูนย์รวมสำหรับการโหลดข้อมูลทั้งหมดบนหน้า Admin
+        function loadAdminData() {
+            loadDashboardStats();
+            fetchTicketsForAdmin();
+            
+            // ตั้งเวลาให้รีเฟรชข้อมูลอัตโนมัติทุกๆ 5 วินาที
+            setInterval(() => {
+                loadDashboardStats();
+                fetchTicketsForAdmin();
+            }, 5000);
+        }
+
+        // 1. ดึงตัวเลขสถิติมาแสดงบนการ์ดด้านบน
+        async function loadDashboardStats() {
+            try {
+                const response = await fetch('/api/admin/stats');
+                const data = await response.json();
+                
+                document.getElementById('stat-total').innerText = data.total;
+                document.getElementById('stat-pending').innerText = data.pending;
+                document.getElementById('stat-processing').innerText = data.processing;
+                document.getElementById('stat-completed').innerText = data.completed;
+            } catch (error) {
+                console.error("โหลดสถิติผิดพลาด:", error);
+            }
+        }
+
+        // 2. ดึงรายการแจ้งซ่อมทั้งหมดมาแสดงเป็นตาราง "แบบแก้ไขไม่ได้"
+        async function fetchTicketsForAdmin() {
+            try {
+                // เรียกใช้ API เส้นเดียวกับที่หน้าช่างใช้เพื่อดึงเคสทั้งหมด
+                const response = await fetch('/api/repairs');
+                const tickets = await response.json();
+                
+                const tbody = document.getElementById('adminTicketList');
+                tbody.innerHTML = ''; 
+
+                if (tickets.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="6" class="text-center py-8 text-slate-400">ยังไม่มีรายการแจ้งซ่อมในระบบ</td></tr>`;
+                    return;
+                }
+
+                tickets.forEach(ticket => {
+                    // ตกแต่ง Badge ตามระดับความเร่งด่วนเหมือนหน้าช่าง
+                    let priorityColor = 'bg-slate-100 text-slate-700';
+                    if (ticket.priority === 'ด่วน') priorityColor = 'bg-amber-100 text-amber-700';
+                    if (ticket.priority === 'ด่วนที่สุด') priorityColor = 'bg-red-100 text-red-700 font-bold';
+
+                    // ตกแต่ง Badge ของ "สถานะงาน" เพื่อแสดงผลให้อ่านง่ายขึ้นแทนการใช้กล่อง Select Option
+                    let statusStyle = 'bg-slate-100 text-slate-600';
+                    if (ticket.status === 'รอดำเนินการ') statusStyle = 'bg-amber-50 text-amber-600 border border-amber-200';
+                    if (ticket.status === 'กำลังซ่อม') statusStyle = 'bg-blue-50 text-blue-600 border border-blue-200';
+                    if (ticket.status === 'ซ่อมเสร็จสิ้น') statusStyle = 'bg-green-50 text-green-600 border border-green-200';
+
+                    // แก้ไขโค้ดในส่วน tbody.appendChild ในไฟล์ public/admin.html ให้เป็นแบบนี้:
+
+            const row = document.createElement('tr');
+            row.className = 'hover:bg-slate-50 transition';
+            row.innerHTML = `
+                <td class="py-4 px-6 font-semibold text-slate-500">#${ticket.id}</td>
+                     <td class="py-4 px-6">
+                    <div class="font-medium text-slate-900">${ticket.requester_name}</div>
+                    <div class="text-xs text-slate-400">แผนก :${ticket.department}</div>
+                    <div class="text-xs text-indigo-500 font-medium">📍 ห้อง: ${ticket.room_name || 'ไม่ได้ระบุ'}</div>
+                </td>
+                    <td class="py-4 px-6 text-slate-600">${ticket.problem_type}</td>
+                    <td class="py-4 px-6 text-slate-600 max-w-xs truncate" title="${ticket.description}">${ticket.description}</td>
+                    <td class="py-4 px-6">
+                <span class="px-2.5 py-1 rounded-full text-xs font-medium ${priorityColor}">${ticket.priority}</span>
+                </td>
+                <td class="py-4 px-6">
+                     <select onchange="updateStatusByAdmin(${ticket.id}, this.value)" class="px-2 py-1.5 border border-slate-300 rounded-md text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white font-medium cursor-pointer">
+                          <option value="รอดำเนินการ" ${ticket.status === 'รอดำเนินการ' ? 'selected' : ''}>⏳ รอดำเนินการ</option>
+                          <option value="กำลังซ่อม" ${ticket.status === 'กำลังซ่อม' ? 'selected' : ''}>⚙️ กำลังซ่อม</option>
+                             <option value="ซ่อมเสร็จสิ้น" ${ticket.status === 'ซ่อมเสร็จสิ้น' ? 'selected' : ''}>✅ ซ่อมเสร็จสิ้น</option>
+                </select>
+            </td>
+        `;
+                tbody.appendChild(row);
+                });
+            } catch (error) {
+                console.error('Error fetching admin tickets:', error);
+            }
+        }
+             // ฟังก์ชันสำหรับให้หน้าแอดมินส่งคำสั่งอัปเดตสถานะไปยังเซิร์ฟเวอร์
+async function updateStatusByAdmin(id, newStatus) {
+    try {
+        const response = await fetch(`/api/repair/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status: newStatus })
+        });
+        const result = await response.json();
+        if (result.success) {
+            console.log(`แอดมินเปลี่ยนสถานะเคส #${id} เป็น: ${newStatus}`);
+            loadDashboardStats(); // อัปเดตตัวเลขการ์ดด้านบนทันทีเมื่อเปลี่ยนสถานะ
+        } else {
+            alert('ไม่สามารถอัปเดตสถานะได้: ' + result.message);
+        }
+    } catch (error) {
+        console.error(error);
+    }
+}
+    </script>
+</body>
+</html>

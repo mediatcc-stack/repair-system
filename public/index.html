@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบแจ้งซ่อมอุปกรณ์คอมพิวเตอร์</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen py-10 flex flex-col items-center justify-center">
+
+    <div class="w-full max-w-xl px-4">
+        <div class="bg-white rounded-2xl shadow-xl p-8 border border-slate-100 w-full">
+            <div class="text-center mb-6">
+                <h1 class="text-2xl font-bold text-blue-600 mb-2">💻 ระบบแจ้งซ่อมไอที</h1>
+                <p class="text-sm text-slate-500">กรอกข้อมูลอาการเสียของอุปกรณ์หรือซอฟต์แวร์เพื่อให้เจ้าหน้าที่ดำเนินการ</p>
+            </div>
+
+            <form id="repairForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-semibold mb-1 text-slate-700">ผู้แจ้ง ชื่อ-นามสกุล</label>
+                    <input type="text" id="requester_name" required class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold mb-1 text-slate-700">แผนก / ฝ่าย</label>
+                        <input type="text" id="department" required class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm" placeholder="เช่น บัญชี, การตลาด">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-1 text-slate-700">ห้อง / สถานที่</label>
+                        <input type="text" id="room_name" required class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm" placeholder="เช่น ห้องประชุม 1, ชั้น 3">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold mb-1 text-slate-700">ประเภทปัญหา</label>
+                        <select id="problem_type" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-white">
+                            <option value="ฮาร์ดแวร์ (Hardware)">ฮาร์ดแวร์ (Hardware)</option>
+                            <option value="ซอฟต์แวร์ (Software)">ซอฟต์แวร์ (Software)</option>
+                            <option value="เครือข่าย (Network)">เครือข่าย (Network)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-1 text-slate-700">ระดับความเร่งด่วน</label>
+                        <select id="priority" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-white">
+                            <option value="ปกติ">ปกติ</option>
+                            <option value="ด่วน">ด่วน</option>
+                            <option value="ด่วนที่สุด">ด่วนที่สุด 🔥</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold mb-1 text-slate-700">รายละเอียดอาการเสีย</label>
+                    <textarea id="description" rows="4" required class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm" placeholder="ระบุรายละเอียด เช่น เปิดเครื่องไม่ติด, โปรแกรมค้าง..."></textarea>
+                </div>
+
+                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-4 rounded-lg transition text-sm cursor-pointer shadow-md mt-2">
+                    ส่งข้อมูลแจ้งซ่อม
+                </button>
+            </form>
+        </div>
+
+        <div class="text-center mt-6">
+            <a href="/dashboard.html" class="text-sm text-blue-500 hover:underline">👉 รายการเเจ้งซ่อม</a>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('repairForm').addEventListener('submit', async (e) => {
+            e.preventDefault(); 
+            
+            const data = {
+                requester_name: document.getElementById('requester_name').value,
+                department: document.getElementById('department').value,
+                room_name: document.getElementById('room_name').value, 
+                problem_type: document.getElementById('problem_type').value,
+                priority: document.getElementById('priority').value,
+                description: document.getElementById('description').value
+            };
+
+            try {
+                const response = await fetch('/api/repair', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+
+                if (result.success) {
+                    alert('🎉 แจ้งซ่อมสำเร็จ! เจ้าหน้าที่จะรีบเข้าตรวจสอบ');
+                    document.getElementById('repairForm').reset(); 
+                } else {
+                    alert('เกิดข้อผิดพลาด: ' + result.message);
+                }
+            } catch (error) {
+                console.error(error);
+                alert('ไม่สามารถติดต่อเซิร์ฟเวอร์ได้');
+            }
+        });
+const data = {
+    requester_name: document.getElementById('requester_name').value,
+    department: document.getElementById('department').value,
+    room_name: document.getElementById('room_name').value, // ✨ ดึงค่าชื่อห้อง
+    problem_type: document.getElementById('problem_type').value,
+    priority: document.getElementById('priority').value,
+    description: document.getElementById('description').value
+};
+    </script>
+</body>
+</html>
