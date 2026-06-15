@@ -6,10 +6,10 @@
     <title>ระบบแจ้งซ่อมอุปกรณ์คอมพิวเตอร์</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen py-10 flex flex-col items-center justify-center">
+<body class="bg-slate-50 text-slate-800 min-h-screen py-6 md:py-10 flex flex-col items-center justify-center">
 
-    <div class="w-full max-w-xl px-4">
-        <div class="bg-white rounded-2xl shadow-xl p-8 border border-slate-100 w-full">
+    <div class="w-full max-w-xl px-4 mx-auto">
+        <div class="bg-white rounded-2xl shadow-xl p-6 md:p-8 border border-slate-100 w-full">
             <div class="text-center mb-6">
                 <h1 class="text-2xl font-bold text-blue-600 mb-2">💻 ระบบแจ้งซ่อมไอที</h1>
                 <p class="text-sm text-slate-500">กรอกข้อมูลอาการเสียของอุปกรณ์หรือซอฟต์แวร์เพื่อให้เจ้าหน้าที่ดำเนินการ</p>
@@ -18,24 +18,24 @@
             <form id="repairForm" class="space-y-4">
                 <div>
                     <label class="block text-sm font-semibold mb-1 text-slate-700">ผู้แจ้ง ชื่อ-นามสกุล</label>
-                    <input type="text" id="requester_name" required class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+                    <input type="text" id="requester_name" required class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-base md:text-sm">
                 </div>
 
-                <div class="grid grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-semibold mb-1 text-slate-700">แผนก / ฝ่าย</label>
-                        <input type="text" id="department" required class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm" placeholder="เช่น บัญชี, การตลาด">
+                        <input type="text" id="department" required class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-base md:text-sm" placeholder="เช่น บัญชี, การตลาด">
                     </div>
                     <div>
                         <label class="block text-sm font-semibold mb-1 text-slate-700">ห้อง / สถานที่</label>
-                        <input type="text" id="room_name" required class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm" placeholder="เช่น ห้องประชุม 1, ชั้น 3">
+                        <input type="text" id="room_name" required class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-base md:text-sm" placeholder="เช่น ห้องประชุม 1, ชั้น 3">
                     </div>
                 </div>
 
-                <div class="grid grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-semibold mb-1 text-slate-700">ประเภทปัญหา</label>
-                        <select id="problem_type" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-white">
+                        <select id="problem_type" class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-base md:text-sm bg-white">
                             <option value="ฮาร์ดแวร์ (Hardware)">ฮาร์ดแวร์ (Hardware)</option>
                             <option value="ซอฟต์แวร์ (Software)">ซอฟต์แวร์ (Software)</option>
                             <option value="เครือข่าย (Network)">เครือข่าย (Network)</option>
@@ -43,7 +43,7 @@
                     </div>
                     <div>
                         <label class="block text-sm font-semibold mb-1 text-slate-700">ระดับความเร่งด่วน</label>
-                        <select id="priority" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-white">
+                        <select id="priority" class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-base md:text-sm bg-white">
                             <option value="ปกติ">ปกติ</option>
                             <option value="ด่วน">ด่วน</option>
                             <option value="ด่วนที่สุด">ด่วนที่สุด 🔥</option>
@@ -53,10 +53,10 @@
 
                 <div>
                     <label class="block text-sm font-semibold mb-1 text-slate-700">รายละเอียดอาการเสีย</label>
-                    <textarea id="description" rows="4" required class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm" placeholder="ระบุรายละเอียด เช่น เปิดเครื่องไม่ติด, โปรแกรมค้าง..."></textarea>
+                    <textarea id="description" rows="4" required class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-base md:text-sm" placeholder="ระบุรายละเอียด เช่น เปิดเครื่องไม่ติด, โปรแกรมค้าง..."></textarea>
                 </div>
 
-                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-4 rounded-lg transition text-sm cursor-pointer shadow-md mt-2">
+                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition text-base md:text-sm cursor-pointer shadow-md mt-2">
                     ส่งข้อมูลแจ้งซ่อม
                 </button>
             </form>
@@ -99,14 +99,6 @@
                 alert('ไม่สามารถติดต่อเซิร์ฟเวอร์ได้');
             }
         });
-const data = {
-    requester_name: document.getElementById('requester_name').value,
-    department: document.getElementById('department').value,
-    room_name: document.getElementById('room_name').value, // ✨ ดึงค่าชื่อห้อง
-    problem_type: document.getElementById('problem_type').value,
-    priority: document.getElementById('priority').value,
-    description: document.getElementById('description').value
-};
     </script>
 </body>
 </html>
